@@ -3,6 +3,7 @@ const graphqlHTTP = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -18,5 +19,14 @@ app.use('/graphql', graphqlHTTP({
     schema, // graph schema for graphql not mongo db
     graphiql: true,
 }));
-app.listen(4000);
-console.log('Running a GraphQL API server at localhost:4000/graphql');
+
+app.use(express.static('public'));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+})
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => console.log(`Running a GraphQL API server at ${PORT}`));
+
